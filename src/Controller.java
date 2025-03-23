@@ -129,7 +129,6 @@ public class Controller {
       }
     }
   }
-
   private void handleDstoreConnection(Socket socket, String joinMessage) {
     try {
       // Parse JOIN message to get port
@@ -139,7 +138,6 @@ public class Controller {
         socket.close();
         return;
       }
-
       int dstorePort = Integer.parseInt(tokens[1]);
 
       // Create DstoreInfo object and add to dstores map
@@ -175,6 +173,52 @@ public class Controller {
         System.err.println("Error closing socket: " + ex.getMessage());
       }
     }
+  }
+
+  private void handleDstoreDisconnection(DstoreInfo dstore) {
+    dstoresLock.writeLock().lock();
+    try {
+      int dstorePort = dstore.getPort();
+      dstores.remove(dstorePort);
+      System.out.println("Dstore disconnected: " + dstorePort);
+
+      // Update replication manager
+      Set<String> affectedFiles = replicationManager.handleDstoreDisconnection(dstorePort);
+      System.out.println("Dstore " + dstorePort + " disconnected. Affected files: " + affectedFiles);
+
+      // Check if we have enough Dstores to maintain replication factor
+      int remainingDstores = getDstoreCount();
+      if (remainingDstores < r) {
+        // Critical situation: Cannot maintain replication factor
+        System.out.println("*************** WARNING ***************");
+        System.out.println("SYSTEM OPERATING IN DEGRADED STATE");
+        System.out.println("Not enough Dstores remaining (have " + remainingDstores +
+            ", need " + r + ") to maintain replication factor");
+        System.out.println("Affected files are under-replicated: " + affectedFiles);
+        System.out.println("Add more Dstores to restore redundancy");
+        System.out.println("***************************************");
+
+        // Mark these files as under-replicated in ReplicationManager
+        if (!affectedFiles.isEmpty()) {
+          replicationManager.markFilesAsUnderReplicated(affectedFiles);
+        }
+      } else if (!rebalanceInProgress && !affectedFiles.isEmpty()) {
+        // We have enough Dstores, start rebalance to restore replication
+        System.out.println("Starting urgent rebalance to restore replication factor for " +
+            affectedFiles.size() + " affected files");
+        startRebalance();
+      } else if (rebalanceInProgress && !affectedFiles.isEmpty()) {
+        // Rebalance already in progress
+        System.out.println("Cannot start rebalance for affected files immediately - " +
+            "rebalance already in progress. Will handle in next scheduled rebalance.");
+
+        // Queue a rebalance request
+        queuedOperations.add(new QueuedOperation(OperationType.REBALANCE, null, null, null));
+      }
+    } finally {
+      dstoresLock.writeLock().unlock();
+    }
+
   }
 
   private void handleClientConnection(Socket socket, String firstMessage) {
@@ -604,24 +648,7 @@ public class Controller {
     out.println(listMsg.toString());
   }
 
-  private void handleDstoreDisconnection(DstoreInfo dstore) {
-    dstoresLock.writeLock().lock();
-    try {
-      dstores.remove(dstore.getPort());
-      System.out.println("Dstore disconnected: " + dstore.getPort());
 
-      // Update replication manager
-      Set<String> affectedFiles = replicationManager.handleDstoreDisconnection(dstore.getPort());
-      System.out.println("Dstore " + dstore.getPort() + " disconnected. Affected files: " + affectedFiles);
-
-      // If rebalance is not in progress and we still have enough Dstores, start a rebalance
-      if (!rebalanceInProgress && getDstoreCount() >= r && !affectedFiles.isEmpty()) {
-        startRebalance();
-      }
-    } finally {
-      dstoresLock.writeLock().unlock();
-    }
-  }
 
   private List<Integer> selectDstoresForStore() {
 
@@ -813,6 +840,23 @@ public class Controller {
         queuedOperations.size() + " queued operations");
     rebalanceInProgress = false;
 
+    // NEW CODE: Refresh file tracking by requesting LIST from all Dstores
+    dstoresLock.readLock().lock();
+    try {
+      for (DstoreInfo dstore : dstores.values()) {
+        try {
+          PrintWriter dstoreOut = new PrintWriter(
+              new OutputStreamWriter(dstore.getSocket().getOutputStream()), true);
+          dstoreOut.println(Protocol.LIST_TOKEN);
+          System.out.println("Sent LIST to Dstore " + dstore.getPort() + " to refresh tracking");
+        } catch (IOException e) {
+          System.err.println("Error sending LIST to Dstore: " + e.getMessage());
+        }
+      }
+    } finally {
+      dstoresLock.readLock().unlock();
+    }
+
     // Process queued operations
     processQueuedOperations();
   }
@@ -830,6 +874,16 @@ public class Controller {
 
             // Start a thread to listen for messages from this Dstore
             new Thread(() -> listenForDstoreMessages(dstoreInfo)).start();
+
+            // Send LIST to initialize tracking
+            try {
+              PrintWriter dstoreOut = new PrintWriter(
+                  new OutputStreamWriter(dstoreInfo.getSocket().getOutputStream()), true);
+              dstoreOut.println(Protocol.LIST_TOKEN);
+              System.out.println("Sent LIST to queued Dstore " + dstoreInfo.getPort() + " to initialize tracking");
+            } catch (IOException e) {
+              System.err.println("Error sending LIST to queued Dstore: " + e.getMessage());
+            }
           } finally {
             dstoresLock.writeLock().unlock();
           }
@@ -840,6 +894,13 @@ public class Controller {
             processClientMessage(op.clientSocket, op.message, out);
           } catch (IOException e) {
             System.err.println("Error processing queued client message: " + e.getMessage());
+          }
+          break;
+        case REBALANCE:
+          // Process queued rebalance request
+          if (!rebalanceInProgress && getDstoreCount() >= r) {
+            System.out.println("Processing queued rebalance after previous rebalance completion");
+            startRebalance();
           }
           break;
       }
@@ -887,7 +948,8 @@ public class Controller {
 
   private enum OperationType {
     JOIN,
-    CLIENT_MESSAGE
+    CLIENT_MESSAGE,
+    REBALANCE
   }
 
   private class QueuedOperation {

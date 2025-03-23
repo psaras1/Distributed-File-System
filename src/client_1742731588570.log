@@ -1,0 +1,496 @@
+Connection established to port 12345
+Message sent to port 12345: STORE 5.txt 6
+Store operation started for file 5.txt
+Message received from port 12345: STORE_TO 10001 10002 10003
+Controller replied to store 5.txt in these Dstores: 10001 10002 10003 
+Connection established to port 10001
+Message sent to port 10001: STORE 5.txt 6
+Storing file 5.txt to Dstore 10001
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 5.txt
+Store of file 5.txt to Dstore 10001 successfully completed
+Connection established to port 10002
+Message sent to port 10002: STORE 5.txt 6
+Storing file 5.txt to Dstore 10002
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 5.txt
+Store of file 5.txt to Dstore 10002 successfully completed
+Connection established to port 10003
+Message sent to port 10003: STORE 5.txt 6
+Storing file 5.txt to Dstore 10003
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 5.txt
+Store of file 5.txt to Dstore 10003 successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 5.txt completed
+Message sent to port 12345: STORE 4.txt 2
+Store operation started for file 4.txt
+Message received from port 12345: STORE_TO 10001 10002 10003
+Controller replied to store 4.txt in these Dstores: 10001 10002 10003 
+Connection established to port 10001
+Message sent to port 10001: STORE 4.txt 2
+Storing file 4.txt to Dstore 10001
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 4.txt
+Store of file 4.txt to Dstore 10001 successfully completed
+Connection established to port 10002
+Message sent to port 10002: STORE 4.txt 2
+Storing file 4.txt to Dstore 10002
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 4.txt
+Store of file 4.txt to Dstore 10002 successfully completed
+Connection established to port 10003
+Message sent to port 10003: STORE 4.txt 2
+Storing file 4.txt to Dstore 10003
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 4.txt
+Store of file 4.txt to Dstore 10003 successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 4.txt completed
+Message sent to port 12345: STORE 3.txt 4
+Store operation started for file 3.txt
+Message received from port 12345: STORE_TO 10001 10002 10003
+Controller replied to store 3.txt in these Dstores: 10001 10002 10003 
+Connection established to port 10001
+Message sent to port 10001: STORE 3.txt 4
+Storing file 3.txt to Dstore 10001
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 3.txt
+Store of file 3.txt to Dstore 10001 successfully completed
+Connection established to port 10002
+Message sent to port 10002: STORE 3.txt 4
+Storing file 3.txt to Dstore 10002
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 3.txt
+Store of file 3.txt to Dstore 10002 successfully completed
+Connection established to port 10003
+Message sent to port 10003: STORE 3.txt 4
+Storing file 3.txt to Dstore 10003
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 3.txt
+Store of file 3.txt to Dstore 10003 successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 3.txt completed
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 2.txt
+Message received from port 12345: STORE_TO 10001 10002 10003
+Controller replied to store 2.txt in these Dstores: 10001 10002 10003 
+Connection established to port 10001
+Message sent to port 10001: STORE 2.txt 5
+Storing file 2.txt to Dstore 10001
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 2.txt
+Store of file 2.txt to Dstore 10001 successfully completed
+Connection established to port 10002
+Message sent to port 10002: STORE 2.txt 5
+Storing file 2.txt to Dstore 10002
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 2.txt
+Store of file 2.txt to Dstore 10002 successfully completed
+Connection established to port 10003
+Message sent to port 10003: STORE 2.txt 5
+Storing file 2.txt to Dstore 10003
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 2.txt
+Store of file 2.txt to Dstore 10003 successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 2.txt completed
+Message sent to port 12345: STORE 1.txt 5
+Store operation started for file 1.txt
+Message received from port 12345: STORE_TO 10001 10002 10003
+Controller replied to store 1.txt in these Dstores: 10001 10002 10003 
+Connection established to port 10001
+Message sent to port 10001: STORE 1.txt 5
+Storing file 1.txt to Dstore 10001
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 1.txt
+Store of file 1.txt to Dstore 10001 successfully completed
+Connection established to port 10002
+Message sent to port 10002: STORE 1.txt 5
+Storing file 1.txt to Dstore 10002
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 1.txt
+Store of file 1.txt to Dstore 10002 successfully completed
+Connection established to port 10003
+Message sent to port 10003: STORE 1.txt 5
+Storing file 1.txt to Dstore 10003
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 1.txt
+Store of file 1.txt to Dstore 10003 successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 1.txt completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST 3.txt 2.txt 4.txt 5.txt 1.txt
+List operation successfully completed
+Connection established to port 12345
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST 3.txt 2.txt 4.txt 5.txt 1.txt
+List operation successfully completed
+Message sent to port 12345: STORE 5.txt 6
+Store operation started for file 5.txt
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 5.txt already exists in the data store
+Message sent to port 12345: STORE 5.txt 6
+Store operation started for file 5.txt
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 5.txt already exists in the data store
+Message sent to port 12345: STORE 4.txt 2
+Store operation started for file 4.txt
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 4.txt already exists in the data store
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST 3.txt 2.txt 4.txt 5.txt 1.txt
+List operation successfully completed
+Message sent to port 12345: LOAD 3.txt
+Load operation for file 3.txt started
+Message received from port 12345: LOAD_FROM 10001 4
+Controller replied to load file 3.txt (size: 4 bytes) from Dstore 10001
+Connection established to port 10001
+Message sent to port 10001: LOAD_DATA 3.txt
+Loading file 3.txt from Dstore 10001
+Load operation of file 3.txt from Dstore 10001 successfully completed
+Message sent to port 12345: LOAD 2.txt
+Load operation for file 2.txt started
+Message received from port 12345: LOAD_FROM 10003 5
+Controller replied to load file 2.txt (size: 5 bytes) from Dstore 10003
+Connection established to port 10003
+Message sent to port 10003: LOAD_DATA 2.txt
+Loading file 2.txt from Dstore 10003
+Load operation of file 2.txt from Dstore 10003 successfully completed
+Message sent to port 12345: LOAD 4.txt
+Load operation for file 4.txt started
+Message received from port 12345: LOAD_FROM 10001 2
+Controller replied to load file 4.txt (size: 2 bytes) from Dstore 10001
+Connection established to port 10001
+Message sent to port 10001: LOAD_DATA 4.txt
+Loading file 4.txt from Dstore 10001
+Load operation of file 4.txt from Dstore 10001 successfully completed
+Message sent to port 12345: LOAD 5.txt
+Load operation for file 5.txt started
+Message received from port 12345: LOAD_FROM 10002 6
+Controller replied to load file 5.txt (size: 6 bytes) from Dstore 10002
+Connection established to port 10002
+Message sent to port 10002: LOAD_DATA 5.txt
+Loading file 5.txt from Dstore 10002
+Load operation of file 5.txt from Dstore 10002 successfully completed
+Message sent to port 12345: LOAD 1.txt
+Load operation for file 1.txt started
+Message received from port 12345: LOAD_FROM 10003 5
+Controller replied to load file 1.txt (size: 5 bytes) from Dstore 10003
+Connection established to port 10003
+Message sent to port 10003: LOAD_DATA 1.txt
+Loading file 1.txt from Dstore 10003
+Load operation of file 1.txt from Dstore 10003 successfully completed
+Message sent to port 12345: REMOVE 3.txt
+Remove operation for file 3.txt started
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 3.txt successfully completed
+Message sent to port 12345: REMOVE 2.txt
+Remove operation for file 2.txt started
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 2.txt successfully completed
+Message sent to port 12345: REMOVE 4.txt
+Remove operation for file 4.txt started
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 4.txt successfully completed
+Message sent to port 12345: REMOVE 5.txt
+Remove operation for file 5.txt started
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 5.txt successfully completed
+Message sent to port 12345: REMOVE 1.txt
+Remove operation for file 1.txt started
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 1.txt successfully completed
+Message sent to port 12345: REMOVE 3.txt
+Remove operation for file 3.txt started
+Message received from port 12345: ERROR_FILE_DOES_NOT_EXIST
+Remove operation failed because file does not exist (filename: 3.txt)
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST
+List operation successfully completed
+Connection established to port 12345
+Connection established to port 12345
+Connection established to port 12345
+Connection established to port 12345
+Connection established to port 12345
+Connection established to port 12345
+Connection established to port 12345
+Connection established to port 12345
+Message sent to port 12345: STORE 2.txt 5
+Message sent to port 12345: STORE 2.txt 5
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 2.txt
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 2.txt
+Connection established to port 12345
+Message sent to port 12345: STORE 4.txt 2
+Store operation started for file 4.txt
+Connection established to port 12345
+Message sent to port 12345: STORE 3.txt 4
+Message sent to port 12345: STORE 3.txt 4
+Message sent to port 12345: STORE 5.txt 6
+Store operation started for file 5.txt
+Store operation started for file 2.txt
+Store operation started for file 2.txt
+Store operation started for file 3.txt
+Message sent to port 12345: STORE 1.txt 5
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 1.txt
+Store operation started for file 3.txt
+Message received from port 12345: STORE_TO 10001 10002 10003
+Store operation started for file 2.txt
+Controller replied to store 2.txt in these Dstores: 10001 10002 10003 
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+Message received from port 12345: STORE_TO 10001 10002 10003
+Connection established to port 10001
+Controller replied to store 3.txt in these Dstores: 10001 10002 10003 
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 2.txt already exists in the data store
+Message sent to port 10001: STORE 2.txt 5
+Storing file 2.txt to Dstore 10001
+File to store 2.txt already exists in the data store
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 3.txt already exists in the data store
+Connection established to port 10001
+Message sent to port 10001: STORE 3.txt 4
+Storing file 3.txt to Dstore 10001
+Message sent to port 12345: STORE 5.txt 6
+Store operation started for file 5.txt
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 2.txt
+Store of file 2.txt to Dstore 10001 successfully completed
+Message sent to port 12345: STORE 3.txt 4
+Store operation started for file 3.txt
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 2.txt already exists in the data store
+Connection established to port 10002
+Message sent to port 10002: STORE 2.txt 5
+Message sent to port 12345: STORE 5.txt 6
+Storing file 2.txt to Dstore 10002
+Store operation started for file 5.txt
+Message sent to port 12345: STORE 3.txt 4
+Store operation started for file 3.txt
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 3.txt
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+Store of file 3.txt to Dstore 10001 successfully completed
+File to store 2.txt already exists in the data store
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 2.txt
+Store of file 2.txt to Dstore 10002 successfully completed
+Message sent to port 12345: STORE 5.txt 6
+Connection established to port 10002
+Store operation started for file 5.txt
+Message sent to port 10002: STORE 3.txt 4
+Storing file 3.txt to Dstore 10002
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 5.txt already exists in the data store
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 3.txt already exists in the data store
+Message received from port 12345: STORE_TO 10001 10002 10003
+Message sent to port 12345: LIST
+Controller replied to store 5.txt in these Dstores: 10001 10002 10003 
+Connection established to port 10003
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+List operation started
+Message sent to port 12345: LIST
+Message sent to port 10003: STORE 2.txt 5
+Message received from port 12345: STORE_TO 10001 10002 10003
+Message received from port 10002: ACK
+List operation started
+Message received from port 12345: LIST
+List operation successfully completed
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+Message sent to port 12345: LIST
+List operation started
+File to store 5.txt already exists in the data store
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+ACK received from Dstore 10002 to store file 3.txt
+Connection established to port 10001
+File to store 3.txt already exists in the data store
+Message received from port 12345: LIST
+Message sent to port 12345: LIST
+Message sent to port 10001: STORE 5.txt 6
+Message received from port 12345: STORE_TO 10003 10002 10001
+Controller replied to store 1.txt in these Dstores: 10003 10002 10001 
+Storing file 2.txt to Dstore 10003
+Message sent to port 12345: LIST
+List operation started
+File to store 5.txt already exists in the data store
+Message received from port 10003: ACK
+Controller replied to store 4.txt in these Dstores: 10001 10002 10003 
+Message sent to port 12345: STORE 4.txt 2
+Store operation started for file 4.txt
+Connection established to port 10003
+Message received from port 12345: LIST
+List operation successfully completed
+Message received from port 12345: LIST
+List operation successfully completed
+Message sent to port 12345: LIST
+List operation started
+Connection established to port 10001
+Message sent to port 10001: STORE 4.txt 2
+Storing file 4.txt to Dstore 10001
+Store of file 3.txt to Dstore 10002 successfully completed
+Message received from port 10001: ACK
+ACK received from Dstore 10001 to store file 4.txt
+Connection established to port 10003
+List operation successfully completed
+Message sent to port 12345: LIST
+List operation started
+List operation started
+Message received from port 12345: LIST
+List operation successfully completed
+Message received from port 12345: LIST
+List operation successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST
+List operation successfully completed
+Message received from port 12345: LIST
+List operation successfully completed
+Storing file 5.txt to Dstore 10001
+ACK received from Dstore 10003 to store file 2.txt
+Message sent to port 10003: STORE 1.txt 5
+Storing file 1.txt to Dstore 10003
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 4.txt already exists in the data store
+Store of file 4.txt to Dstore 10001 successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message sent to port 10003: STORE 3.txt 4
+Storing file 3.txt to Dstore 10003
+Message received from port 10001: ACK
+Message received from port 10003: ACK
+ACK received from Dstore 10001 to store file 5.txt
+Message received from port 12345: LIST
+Store of file 5.txt to Dstore 10001 successfully completed
+Store of file 2.txt to Dstore 10003 successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 2.txt completed
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 1.txt
+Store of file 1.txt to Dstore 10003 successfully completed
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 2.txt
+Connection established to port 10002
+Message sent to port 10002: STORE 5.txt 6
+ACK received from Dstore 10003 to store file 3.txt
+Connection established to port 10002
+Store of file 3.txt to Dstore 10003 successfully completed
+Message sent to port 10002: STORE 4.txt 2
+Storing file 4.txt to Dstore 10002
+List operation successfully completed
+Connection established to port 10002
+Message sent to port 12345: LIST
+List operation started
+Message sent to port 10002: STORE 1.txt 5
+Storing file 1.txt to Dstore 10002
+Storing file 5.txt to Dstore 10002
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 2.txt already exists in the data store
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: STORE_COMPLETE
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 4.txt
+Store operation for file 3.txt completed
+Message received from port 12345: LIST 2.txt
+List operation successfully completed
+Store of file 4.txt to Dstore 10002 successfully completed
+Message received from port 10002: ACK
+ACK received from Dstore 10002 to store file 5.txt
+Message received from port 10002: ACK
+Message sent to port 12345: STORE 2.txt 5
+Message received from port 12345: LIST 3.txt 2.txt
+List operation successfully completed
+ACK received from Dstore 10002 to store file 1.txt
+Connection established to port 10003
+Store of file 1.txt to Dstore 10002 successfully completed
+Store operation started for file 2.txt
+Store of file 5.txt to Dstore 10002 successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 2.txt already exists in the data store
+Message sent to port 10003: STORE 4.txt 2
+Storing file 4.txt to Dstore 10003
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST 3.txt 2.txt
+Connection established to port 10001
+List operation successfully completed
+Message sent to port 10001: STORE 1.txt 5
+Storing file 1.txt to Dstore 10001
+Connection established to port 10003
+Message received from port 10003: ACK
+Message sent to port 10003: STORE 5.txt 6
+Storing file 5.txt to Dstore 10003
+Message received from port 10001: ACK
+ACK received from Dstore 10003 to store file 4.txt
+Message received from port 12345: LIST 3.txt 2.txt
+Store of file 4.txt to Dstore 10003 successfully completed
+List operation successfully completed
+ACK received from Dstore 10001 to store file 1.txt
+Store of file 1.txt to Dstore 10001 successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 10003: ACK
+ACK received from Dstore 10003 to store file 5.txt
+Store of file 5.txt to Dstore 10003 successfully completed
+Message received from port 12345: LIST 3.txt 2.txt
+List operation successfully completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 4.txt completed
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 1.txt completed
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 2.txt
+Message sent to port 12345: STORE 2.txt 5
+Store operation started for file 2.txt
+Message received from port 12345: STORE_COMPLETE
+Store operation for file 5.txt completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+Message received from port 12345: ERROR_FILE_ALREADY_EXISTS
+File to store 2.txt already exists in the data store
+File to store 2.txt already exists in the data store
+Message received from port 12345: LIST 3.txt 2.txt 4.txt 5.txt 1.txt
+List operation successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message sent to port 12345: LIST
+List operation started
+Message sent to port 12345: REMOVE 5.txt
+Remove operation for file 5.txt started
+Message received from port 12345: LIST 3.txt 2.txt 4.txt 5.txt 1.txt
+List operation successfully completed
+Message received from port 12345: LIST 3.txt 2.txt 4.txt 5.txt 1.txt
+List operation successfully completed
+Message sent to port 12345: REMOVE 1.txt
+Remove operation for file 1.txt started
+Message sent to port 12345: REMOVE 1.txt
+Remove operation for file 1.txt started
+Message received from port 12345: ERROR_FILE_DOES_NOT_EXIST
+Remove operation failed because file does not exist (filename: 1.txt)
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST 3.txt 2.txt 4.txt
+List operation successfully completed
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 5.txt successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: REMOVE_COMPLETE
+Remove operation for file 1.txt successfully completed
+Message sent to port 12345: LIST
+List operation started
+Message received from port 12345: LIST 3.txt 2.txt 4.txt
+List operation successfully completed
+Message received from port 12345: LIST 3.txt 2.txt 4.txt
+List operation successfully completed

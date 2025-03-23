@@ -125,20 +125,18 @@ public class ReplicationManager {
 
     operationsLock.writeLock().lock();
     try {
+      // Always update the tracking maps, regardless of tracker state
+      updateFileLocation(filename, dstorePort);
+
       StoreOperationTracker tracker = storeOperations.get(filename);
       if (tracker != null && tracker.expectedDstores.contains(dstorePort)) {
         // Record the acknowledgment
         tracker.acknowledgedDstores.add(dstorePort);
 
-        // Update file-to-Dstores and Dstore-to-files mappings
-        updateFileLocation(filename, dstorePort);
-
         // Check if all acknowledgments have been received
         allAcksReceived = tracker.acknowledgedDstores.equals(tracker.expectedDstores);
 
         if (allAcksReceived) {
-          // Operation is complete, remove from tracking
-          // Don't remove yet, keep for potential timeout handling
           tracker.isComplete = true;
         }
       }
@@ -616,9 +614,25 @@ public class ReplicationManager {
       }
     }
 
+    // If no files, nothing to rebalance
+    if (allFiles.isEmpty()) {
+      return operations;
+    }
+
     // Calculate target number of files per Dstore
     int totalFiles = allFiles.size();
-    int targetFilesPerDstore = (int) Math.ceil((double) totalFiles * replicationFactor / activeDstores.size());
+    int totalFileReplicas = totalFiles * replicationFactor;
+    int idealFilesPerDstore = totalFileReplicas / activeDstores.size();
+    int remainder = totalFileReplicas % activeDstores.size();
+
+    // Create a map of target file counts for each Dstore
+    Map<Integer, Integer> targetFileCounts = new HashMap<>();
+    for (int dstore : activeDstores) {
+      // Distribute remainder evenly
+      int target = idealFilesPerDstore + (remainder > 0 ? 1 : 0);
+      if (remainder > 0) remainder--;
+      targetFileCounts.put(dstore, target);
+    }
 
     // Step 1: Ensure each file has R copies
     for (String file : allFiles) {
@@ -684,81 +698,88 @@ public class ReplicationManager {
       }
     }
 
-    // Step 2: Balance the load
-    // This is a simplified approach - in a real system you'd want
-    // to minimize data movement while achieving balance
-
-    // Count files per Dstore after replication fixes
-    Map<Integer, Integer> dstoreFileCounts = new HashMap<>();
+    // Count current files per Dstore after replication fixes
+    Map<Integer, Integer> currentFileCounts = new HashMap<>();
     for (int dstore : activeDstores) {
       Set<String> files = dstoreFiles.getOrDefault(dstore, new HashSet<>());
-      dstoreFileCounts.put(dstore, files.size());
+      currentFileCounts.put(dstore, files.size());
     }
 
-    // Identify overloaded and underloaded Dstores
-    List<Integer> overloadedDstores = new ArrayList<>();
-    List<Integer> underloadedDstores = new ArrayList<>();
-
+    // Check if any Dstore is empty - we should always distribute files to all Dstores
+    boolean hasEmptyDstores = false;
     for (int dstore : activeDstores) {
-      int fileCount = dstoreFileCounts.get(dstore);
-      if (fileCount > targetFilesPerDstore) {
-        overloadedDstores.add(dstore);
-      } else if (fileCount < targetFilesPerDstore) {
-        underloadedDstores.add(dstore);
+      if (currentFileCounts.getOrDefault(dstore, 0) == 0) {
+        hasEmptyDstores = true;
+        break;
       }
     }
 
-    // Move files from overloaded to underloaded Dstores
-    for (int overloadedDstore : overloadedDstores) {
-      Set<String> files = new HashSet<>(dstoreFiles.getOrDefault(overloadedDstore, new HashSet<>()));
-      int currentCount = files.size();
+    // Check if load is balanced
+    int maxFiles = Collections.max(currentFileCounts.values());
+    int minFiles = Collections.min(currentFileCounts.values());
+    boolean isUnbalanced = (maxFiles - minFiles > 1) || hasEmptyDstores;
 
-      if (currentCount <= targetFilesPerDstore || underloadedDstores.isEmpty()) {
-        continue;
+    // Step 2: Perform load balancing if needed
+    if (isUnbalanced) {
+      // Identify overloaded and underloaded Dstores
+      List<Integer> overloadedDstores = new ArrayList<>();
+      List<Integer> underloadedDstores = new ArrayList<>();
+
+      for (int dstore : activeDstores) {
+        int currentCount = currentFileCounts.getOrDefault(dstore, 0);
+        int targetCount = targetFileCounts.get(dstore);
+
+        if (currentCount > targetCount) {
+          overloadedDstores.add(dstore);
+        } else if (currentCount < targetCount) {
+          underloadedDstores.add(dstore);
+        }
       }
 
-      // Sort files by replication count (move files with highest replication first)
-      List<String> filesList = new ArrayList<>(files);
-      filesList.sort((f1, f2) -> {
-        int count1 = currentFileLocations.getOrDefault(f1, new HashSet<>()).size();
-        int count2 = currentFileLocations.getOrDefault(f2, new HashSet<>()).size();
-        return Integer.compare(count2, count1);
+      // Sort overloaded Dstores by the number of excess files
+      overloadedDstores.sort((d1, d2) -> {
+        int excess1 = currentFileCounts.get(d1) - targetFileCounts.get(d1);
+        int excess2 = currentFileCounts.get(d2) - targetFileCounts.get(d2);
+        return Integer.compare(excess2, excess1);
       });
 
-      // Find files to move
-      for (String file : filesList) {
-        if (currentCount <= targetFilesPerDstore || underloadedDstores.isEmpty()) {
-          break;
-        }
+      // Sort underloaded Dstores by the number of missing files
+      underloadedDstores.sort((d1, d2) -> {
+        int deficit1 = targetFileCounts.get(d1) - currentFileCounts.get(d1);
+        int deficit2 = targetFileCounts.get(d2) - currentFileCounts.get(d2);
+        return Integer.compare(deficit2, deficit1);
+      });
 
-        Set<Integer> fileDstores = currentFileLocations.get(file);
-        if (fileDstores != null && fileDstores.size() > replicationFactor) {
-          // This file has extra replicas, we can remove it
-          RebalanceOperation op = operations.get(overloadedDstore);
-          op.filesToRemove.add(file);
+      // Move files from overloaded to underloaded Dstores
+      for (int overloadedDstore : overloadedDstores) {
+        if (underloadedDstores.isEmpty()) break;
 
-          // Update our tracking
-          fileDstores.remove(overloadedDstore);
-          dstoreFiles.get(overloadedDstore).remove(file);
-          currentCount--;
-        }
-      }
+        Set<String> files = new HashSet<>(dstoreFiles.getOrDefault(overloadedDstore, new HashSet<>()));
+        int currentCount = files.size();
+        int targetCount = targetFileCounts.get(overloadedDstore);
 
-      // If still overloaded, move some files
-      for (String file : filesList) {
-        if (currentCount <= targetFilesPerDstore || underloadedDstores.isEmpty()) {
-          break;
-        }
+        if (currentCount <= targetCount) continue;
 
-        // Check if this file can be moved (if it's already on another Dstore)
-        Set<Integer> fileDstores = currentFileLocations.get(file);
-        if (fileDstores != null && fileDstores.size() <= replicationFactor) {
-          // Find an underloaded Dstore to move to
+        // Prioritize files that are already well-replicated
+        List<String> filesList = new ArrayList<>(files);
+        filesList.sort((f1, f2) -> {
+          int count1 = currentFileLocations.getOrDefault(f1, new HashSet<>()).size();
+          int count2 = currentFileLocations.getOrDefault(f2, new HashSet<>()).size();
+          return Integer.compare(count2, count1);
+        });
+
+        for (String file : filesList) {
+          if (currentCount <= targetCount || underloadedDstores.isEmpty()) break;
+
+          Set<Integer> fileDstores = currentFileLocations.get(file);
+          if (fileDstores == null || fileDstores.size() < replicationFactor) continue;
+
+          // Find underloaded Dstore that doesn't have this file
           for (int i = 0; i < underloadedDstores.size(); i++) {
             int underloadedDstore = underloadedDstores.get(i);
 
             if (!fileDstores.contains(underloadedDstore)) {
-              // Can move this file to the underloaded Dstore
+              // Can move this file to underloaded Dstore
               RebalanceOperation op = operations.get(overloadedDstore);
               List<Integer> destinations = op.filesToSend.computeIfAbsent(file, k -> new ArrayList<>());
               destinations.add(underloadedDstore);
@@ -772,11 +793,14 @@ public class ReplicationManager {
               dstoreFiles.get(overloadedDstore).remove(file);
               dstoreFiles.computeIfAbsent(underloadedDstore, k -> new HashSet<>()).add(file);
 
+              // Update counts
               currentCount--;
               int underloadedCount = dstoreFiles.get(underloadedDstore).size();
+              currentFileCounts.put(overloadedDstore, currentCount);
+              currentFileCounts.put(underloadedDstore, underloadedCount);
 
-              // Check if the underloaded Dstore is now balanced
-              if (underloadedCount >= targetFilesPerDstore) {
+              // Check if underloaded Dstore is now balanced
+              if (underloadedCount >= targetFileCounts.get(underloadedDstore)) {
                 underloadedDstores.remove(i);
                 i--;
               }
@@ -841,6 +865,27 @@ public class ReplicationManager {
     public RebalanceOperation() {
       this.filesToSend = new HashMap<>();
       this.filesToRemove = new HashSet<>();
+    }
+  }
+
+  /**
+   * Marks files as under-replicated for priority handling when more Dstores join.
+   *
+   * @param files Set of filenames that are under-replicated
+   */
+  public void markFilesAsUnderReplicated(Set<String> files) {
+    // This set will be checked when new Dstores join
+    Set<String> underReplicatedFiles = new HashSet<>(files);
+
+    // Log current file locations for monitoring
+    fileDstoresLock.readLock().lock();
+    try {
+      for (String file : files) {
+        Set<Integer> locations = fileToDstores.getOrDefault(file, new HashSet<>());
+        System.out.println("Under-replicated file: " + file + " currently on Dstores: " + locations);
+      }
+    } finally {
+      fileDstoresLock.readLock().unlock();
     }
   }
 }

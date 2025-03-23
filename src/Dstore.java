@@ -297,19 +297,14 @@ public class Dstore {
   }
 
   private void handleRebalance(String[] tokens) {
-
     synchronized (rebalanceLock) {
       // Parse the rebalance command
       try {
         int index = 1;
         int numFilesToSend = Integer.parseInt(tokens[index++]);
-        int numFilesToRemove = Integer.parseInt(tokens[index + numFilesToSend * (2 + 1)]);
-        System.out.println("Received rebalance command: " + numFilesToSend +
-            " files to send, " + numFilesToRemove + " files to remove");
 
         // Parse files to send
         filesToSend.clear();
-
         for (int i = 0; i < numFilesToSend; i++) {
           String filename = tokens[index++];
           int numDstores = Integer.parseInt(tokens[index++]);
@@ -322,9 +317,13 @@ public class Dstore {
           filesToSend.put(filename, destinations);
         }
 
+        // Now index points to numFilesToRemove
+        int numFilesToRemove = Integer.parseInt(tokens[index++]);
+        System.out.println("Received rebalance command: " + numFilesToSend +
+            " files to send, " + numFilesToRemove + " files to remove");
+
         // Parse files to remove
         filesToRemove = new ArrayList<>();
-
         for (int i = 0; i < numFilesToRemove; i++) {
           filesToRemove.add(tokens[index++]);
         }
@@ -336,7 +335,6 @@ public class Dstore {
         System.err.println("Error parsing REBALANCE message: " + e.getMessage());
         controllerOut.println(Protocol.REBALANCE_COMPLETE_TOKEN);
       }
-
     }
   }
 
@@ -452,6 +450,10 @@ public class Dstore {
 
     fileOut.close();
     System.out.println("Received file from rebalance: " + filename);
+
+    // NEW CODE: Notify Controller that we now have this file
+    controllerOut.println(Protocol.STORE_ACK_TOKEN + " " + filename);
+    System.out.println("Sent STORE_ACK to Controller for rebalanced file: " + filename);
   }
 
   private void shutdown() {

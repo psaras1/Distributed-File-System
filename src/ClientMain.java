@@ -18,7 +18,10 @@ public class ClientMain {
 		File uploadFolder = new File("to_store");
 		if (!uploadFolder.exists())
 			if (!uploadFolder.mkdir()) throw new RuntimeException("Cannot create 'to_store' folder (folder absolute path: " + uploadFolder.getAbsolutePath() + ")");
-		
+
+		// Test storing all files first
+		testAllFiles(cport, timeout, downloadFolder, uploadFolder);
+
 		// launch a single client
 		testClient(cport, timeout, downloadFolder, uploadFolder);
 		
@@ -127,5 +130,42 @@ public class ClientMain {
 		
 		return list;
 	}
+
+	public static void testAllFiles(int cport, int timeout, File downloadFolder, File uploadFolder) {
+		Client client = null;
+		try {
+			client = new Client(cport, timeout, Logger.LoggingType.ON_FILE_AND_TERMINAL);
+			client.connect();
+
+			File[] files = uploadFolder.listFiles();
+
+			System.out.println("Attempting to store " + files.length + " files");
+
+			for (File file : files) {
+				try {
+					System.out.println("Storing: " + file.getName());
+					client.store(file);
+					System.out.println("Successfully stored: " + file.getName());
+				} catch (Exception e) {
+					System.out.println("Error storing file " + file.getName() + ": " + e.getMessage());
+				}
+			}
+
+			// List files to verify
+			String[] storedFiles = client.list();
+			System.out.println("Files in system: " + storedFiles.length);
+			for (String filename : storedFiles) {
+				System.out.println("- " + filename);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (client != null) {
+				try { client.disconnect(); } catch (Exception e) { e.printStackTrace(); }
+			}
+		}
+	}
+
 	
 }
